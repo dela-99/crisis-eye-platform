@@ -12,7 +12,7 @@ import {
   Clock,
   MapPin,
 } from "lucide-react";
-import heroImage from "@/assets/hero-operations.jpg";
+import heroImage from "@/assets/hero-earth.jpg";
 import { PageShell } from "@/components/PageShell";
 
 export const Route = createFileRoute("/")({
@@ -73,21 +73,30 @@ function HomePage() {
   return (
     <PageShell>
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-secondary/60 to-background">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-0 h-[420px] bg-[radial-gradient(60%_60%_at_50%_0%,oklch(0.42_0.18_264/0.08),transparent_70%)]" />
-        <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:py-28">
-          <div className="animate-fade-up">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
+      <section className="relative isolate overflow-hidden border-b border-border">
+        <img
+          src={heroImage}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[radial-gradient(80%_60%_at_30%_40%,rgba(11,17,32,0.55),rgba(11,17,32,0.92)_70%,#0B1120)]"
+        />
+        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-36">
+          <div className="max-w-2xl animate-fade-up">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 backdrop-blur">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-60" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-70" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
               </span>
               Live emergency monitoring
             </span>
-            <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
               Emergency reporting<br className="hidden sm:block" /> made faster and smarter.
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
               CrisisEye helps communities, governments, and first responders report, monitor, and
               track emergencies in real time — so the right help arrives sooner.
             </p>
@@ -100,26 +109,14 @@ function HomePage() {
               </Link>
               <Link
                 to="/map"
-                className="btn-lift inline-flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-background px-6 text-sm font-semibold text-foreground hover:bg-secondary"
+                className="btn-lift inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 text-sm font-semibold text-white backdrop-blur hover:bg-white/10"
               >
                 View live map
               </Link>
             </div>
-            <p className="mt-6 text-xs text-muted-foreground">
+            <p className="mt-6 text-xs text-slate-400">
               In a life-threatening emergency, always call your local emergency number first.
             </p>
-          </div>
-          <div className="relative animate-fade-up [animation-delay:120ms]">
-            <div className="absolute -inset-4 -z-10 rounded-[28px] bg-gradient-to-tr from-primary/10 via-transparent to-destructive/10 blur-2xl" />
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-background shadow-[var(--shadow-card-hover)]">
-              <img
-                src={heroImage}
-                alt="Emergency response coordinators monitoring incident maps in an operations centre"
-                width={1920}
-                height={1080}
-                className="h-full w-full object-cover"
-              />
-            </div>
           </div>
         </div>
       </section>

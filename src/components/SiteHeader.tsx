@@ -64,14 +64,14 @@ export function SiteHeader() {
         </button>
       </div>
       {open && (
-        <div className="mx-auto mt-2 max-w-6xl rounded-2xl border border-border/70 bg-background/95 p-2 shadow-[var(--shadow-floating)] backdrop-blur-md md:hidden">
+        <div className="mx-auto mt-2 max-w-6xl origin-top animate-slide-down rounded-2xl border border-white/10 bg-background/90 p-2 shadow-[var(--shadow-floating)] backdrop-blur-md md:hidden">
           <nav className="flex flex-col gap-1 p-1">
             {nav.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-secondary"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
               >
                 {n.label}
               </Link>
@@ -79,7 +79,7 @@ export function SiteHeader() {
             <Link
               to="/report"
               onClick={() => setOpen(false)}
-              className="mt-1 inline-flex h-10 items-center justify-center rounded-lg bg-destructive px-4 text-sm font-semibold text-destructive-foreground"
+              className="btn-lift mt-1 inline-flex h-10 items-center justify-center rounded-lg bg-destructive px-4 text-sm font-semibold text-destructive-foreground"
             >
               Report Emergency
             </Link>
