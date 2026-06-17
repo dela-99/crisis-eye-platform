@@ -190,14 +190,14 @@ function HomePage() {
           </div>
           <ol className="mt-10 grid gap-6 md:grid-cols-3">
             {steps.map((s, i) => (
-              <li key={s.title} className="rounded-lg border border-border bg-background p-6">
+              <li key={s.title} className="card-elevated card-elevated-hover p-6">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-semibold">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-semibold shadow-sm">
                     {i + 1}
                   </span>
                   <s.icon className="h-5 w-5 text-muted-foreground" />
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-foreground">{s.title}</h3>
+                <h3 className="mt-5 text-lg font-semibold text-foreground">{s.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
               </li>
             ))}
