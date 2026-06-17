@@ -223,25 +223,25 @@ function HomePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/dashboard"
-                className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                className="btn-lift inline-flex h-11 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
               >
                 Explore the dashboard
               </Link>
               <Link
                 to="/report"
-                className="inline-flex h-10 items-center justify-center rounded-md border border-border bg-background px-4 text-sm font-semibold text-foreground hover:bg-secondary"
+                className="btn-lift inline-flex h-11 items-center justify-center rounded-full border border-border bg-background px-5 text-sm font-semibold text-foreground hover:bg-secondary"
               >
                 Submit a test report
               </Link>
             </div>
           </div>
-          <figure className="rounded-xl border border-border bg-background p-8">
+          <figure className="card-elevated p-8 shadow-[var(--shadow-card-hover)]">
             <blockquote className="text-lg leading-8 text-foreground">
               “Within the first month, our flood response time dropped by 31%. The map gave our
               field teams a single picture of what was happening across the district.”
             </blockquote>
             <figcaption className="mt-6 flex items-center gap-3 text-sm">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary font-semibold text-primary">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
                 AK
               </span>
               <span>
