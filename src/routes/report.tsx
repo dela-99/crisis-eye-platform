@@ -87,7 +87,7 @@ function ReportPage() {
 
   return (
     <PageShell>
-      <section className="border-b border-border bg-secondary">
+      <section className="bg-gradient-to-b from-secondary/70 to-background">
         <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">Report</p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Report an incident</h1>
