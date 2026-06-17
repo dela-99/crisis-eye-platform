@@ -241,7 +241,7 @@ function KpiCard({
 }) {
   const goodUp = tone === "ok" ? trend === "up" : trend === "down";
   return (
-    <div className="card-elevated p-5">
+    <div className="card-elevated card-elevated-hover p-5">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
