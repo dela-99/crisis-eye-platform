@@ -164,9 +164,9 @@ function HomePage() {
             {categories.map((c) => (
               <li
                 key={c.label}
-                className="flex gap-4 rounded-lg border border-border bg-background p-5 transition-colors hover:border-primary/40"
+                className="card-elevated card-elevated-hover flex gap-4 p-5"
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <c.icon className="h-5 w-5" />
                 </span>
                 <div>
