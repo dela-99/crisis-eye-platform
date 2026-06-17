@@ -75,8 +75,9 @@ function MapPage() {
       if (cancelled || !mapEl.current) return;
       if (!mapRef.current) {
         mapRef.current = L.map(mapEl.current, { zoomControl: true, scrollWheelZoom: true }).setView([40.745, -73.99], 12);
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "&copy; OpenStreetMap contributors",
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+          attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+          subdomains: "abcd",
           maxZoom: 19,
         }).addTo(mapRef.current);
       }
@@ -85,7 +86,7 @@ function MapPage() {
         const color = typeColor[i.type];
         const icon = L.divIcon({
           className: "",
-          html: `<span style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:9999px;background:${color};color:#fff;border:3px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.25);font-size:11px;font-weight:700;">${i.type[0]}</span>`,
+          html: `<span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;border:3px solid #0B1120;box-shadow:0 0 0 2px ${color}55, 0 2px 6px rgba(0,0,0,.5);font-size:11px;font-weight:700;">${i.type[0]}</span>`,
           iconSize: [26, 26],
           iconAnchor: [13, 13],
         });
@@ -125,10 +126,10 @@ function MapPage() {
               <button
                 key={t}
                 onClick={() => setFilter(t)}
-                className={`inline-flex h-9 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition-colors ${
+                className={`btn-lift inline-flex h-9 items-center gap-2 rounded-full border px-3.5 text-sm font-medium ${
                   active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-background text-foreground hover:bg-secondary"
+                    ? "border-primary/60 bg-primary/15 text-primary"
+                    : "border-border bg-card text-foreground hover:bg-secondary"
                 }`}
               >
                 {t !== "All" && (
@@ -149,7 +150,7 @@ function MapPage() {
           </div>
 
           <aside className="space-y-3">
-            <div className="flex items-center justify-between rounded-lg border border-border bg-background px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
               <span className="text-sm font-semibold">{visible.length} incidents</span>
               <span className="text-xs text-muted-foreground">Updated just now</span>
             </div>
@@ -164,8 +165,8 @@ function MapPage() {
                         setSelected(i);
                         mapRef.current?.setView([i.lat, i.lng], 14, { animate: true });
                       }}
-                      className={`w-full rounded-lg border bg-background p-4 text-left transition-colors ${
-                        active ? "border-primary" : "border-border hover:border-primary/40"
+                      className={`w-full rounded-lg border bg-card p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)] ${
+                        active ? "border-primary/60" : "border-border hover:border-primary/40"
                       }`}
                     >
                       <div className="flex items-start gap-3">
@@ -200,10 +201,10 @@ function MapPage() {
 
 function SeverityBadge({ severity }: { severity: Severity }) {
   const map: Record<Severity, string> = {
-    low: "bg-secondary text-muted-foreground",
-    moderate: "bg-amber-100 text-amber-800",
-    high: "bg-orange-100 text-orange-800",
-    critical: "bg-destructive text-destructive-foreground",
+    low: "bg-white/5 text-slate-300",
+    moderate: "bg-amber-500/15 text-amber-300",
+    high: "bg-orange-500/15 text-orange-300",
+    critical: "bg-destructive/20 text-red-300",
   };
   return (
     <span className={`inline-flex h-5 items-center rounded-full px-2 text-[10px] font-semibold uppercase tracking-wider ${map[severity]}`}>

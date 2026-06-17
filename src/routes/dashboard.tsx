@@ -251,7 +251,7 @@ function KpiCard({
           <Icon className="h-4 w-4" />
         </span>
       </div>
-      <p className={`mt-3 inline-flex items-center gap-1 text-xs font-medium ${goodUp ? "text-emerald-700" : "text-destructive"}`}>
+      <p className={`mt-3 inline-flex items-center gap-1 text-xs font-medium ${goodUp ? "text-emerald-400" : "text-red-400"}`}>
         {trend === "up" ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
         {delta} <span className="font-normal text-muted-foreground">vs last week</span>
       </p>
@@ -261,12 +261,12 @@ function KpiCard({
 
 function StatusPill({ status }: { status: string }) {
   const map: Record<string, string> = {
-    Active: "bg-destructive/10 text-destructive",
-    Responding: "bg-amber-100 text-amber-800",
-    Resolved: "bg-emerald-100 text-emerald-800",
+    Active: "bg-destructive/15 text-red-300",
+    Responding: "bg-amber-500/15 text-amber-300",
+    Resolved: "bg-emerald-500/15 text-emerald-300",
   };
   return (
-    <span className={`inline-flex h-6 items-center rounded-full px-2.5 text-xs font-medium ${map[status] ?? "bg-secondary text-muted-foreground"}`}>
+    <span className={`inline-flex h-6 items-center rounded-full px-2.5 text-xs font-medium ${map[status] ?? "bg-white/5 text-muted-foreground"}`}>
       {status}
     </span>
   );
