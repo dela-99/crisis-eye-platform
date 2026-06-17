@@ -56,7 +56,7 @@ function ReportPage() {
     return (
       <PageShell>
         <section className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
-          <div className="rounded-xl border border-border bg-background p-10 text-center">
+          <div className="card-elevated p-10 text-center">
             <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-primary">
               <CheckCircle2 className="h-6 w-6" />
             </span>
@@ -87,7 +87,7 @@ function ReportPage() {
 
   return (
     <PageShell>
-      <section className="border-b border-border bg-secondary">
+      <section className="bg-gradient-to-b from-secondary/70 to-background">
         <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">Report</p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Report an incident</h1>
@@ -107,7 +107,7 @@ function ReportPage() {
           </p>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-8 rounded-xl border border-border bg-background p-6 sm:p-8">
+        <form onSubmit={onSubmit} className="space-y-8 card-elevated p-6 sm:p-8">
           <div className="space-y-2">
             <label htmlFor="type" className="text-sm font-semibold">
               Incident type <span className="text-destructive">*</span>

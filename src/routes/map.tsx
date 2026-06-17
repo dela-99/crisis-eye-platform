@@ -107,7 +107,7 @@ function MapPage() {
 
   return (
     <PageShell>
-      <section className="border-b border-border bg-secondary">
+      <section className="bg-gradient-to-b from-secondary/70 to-background">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">Live map</p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Active incidents</h1>
@@ -144,7 +144,7 @@ function MapPage() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-          <div className="overflow-hidden rounded-xl border border-border bg-background">
+          <div className="overflow-hidden card-elevated">
             <div ref={mapEl} className="h-[520px] w-full" />
           </div>
 

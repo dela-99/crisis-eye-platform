@@ -73,30 +73,34 @@ function HomePage() {
   return (
     <PageShell>
       {/* Hero */}
-      <section className="border-b border-border bg-secondary">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:py-24">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
+      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-secondary/60 to-background">
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-0 h-[420px] bg-[radial-gradient(60%_60%_at_50%_0%,oklch(0.42_0.18_264/0.08),transparent_70%)]" />
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:py-28">
+          <div className="animate-fade-up">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
+              </span>
               Live emergency monitoring
             </span>
-            <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Emergency reporting made faster and smarter.
+            <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              Emergency reporting<br className="hidden sm:block" /> made faster and smarter.
             </h1>
-            <p className="mt-5 max-w-xl text-lg leading-7 text-muted-foreground">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
               CrisisEye helps communities, governments, and first responders report, monitor, and
               track emergencies in real time — so the right help arrives sooner.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-9 flex flex-wrap gap-3">
               <Link
                 to="/report"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-destructive px-5 text-sm font-semibold text-destructive-foreground transition-colors hover:bg-destructive/90"
+                className="btn-lift inline-flex h-12 items-center justify-center gap-2 rounded-full bg-destructive px-6 text-sm font-semibold text-destructive-foreground"
               >
                 Report an incident <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/map"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border bg-background px-5 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+                className="btn-lift inline-flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-background px-6 text-sm font-semibold text-foreground hover:bg-secondary"
               >
                 View live map
               </Link>
@@ -105,14 +109,17 @@ function HomePage() {
               In a life-threatening emergency, always call your local emergency number first.
             </p>
           </div>
-          <div className="relative overflow-hidden rounded-xl border border-border bg-background shadow-sm">
-            <img
-              src={heroImage}
-              alt="Emergency response coordinators monitoring incident maps in an operations centre"
-              width={1920}
-              height={1080}
-              className="h-full w-full object-cover"
-            />
+          <div className="relative animate-fade-up [animation-delay:120ms]">
+            <div className="absolute -inset-4 -z-10 rounded-[28px] bg-gradient-to-tr from-primary/10 via-transparent to-destructive/10 blur-2xl" />
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-background shadow-[var(--shadow-card-hover)]">
+              <img
+                src={heroImage}
+                alt="Emergency response coordinators monitoring incident maps in an operations centre"
+                width={1920}
+                height={1080}
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -157,9 +164,9 @@ function HomePage() {
             {categories.map((c) => (
               <li
                 key={c.label}
-                className="flex gap-4 rounded-lg border border-border bg-background p-5 transition-colors hover:border-primary/40"
+                className="card-elevated card-elevated-hover flex gap-4 p-5"
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-primary">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <c.icon className="h-5 w-5" />
                 </span>
                 <div>
@@ -183,14 +190,14 @@ function HomePage() {
           </div>
           <ol className="mt-10 grid gap-6 md:grid-cols-3">
             {steps.map((s, i) => (
-              <li key={s.title} className="rounded-lg border border-border bg-background p-6">
+              <li key={s.title} className="card-elevated card-elevated-hover p-6">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-semibold">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-semibold shadow-sm">
                     {i + 1}
                   </span>
                   <s.icon className="h-5 w-5 text-muted-foreground" />
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-foreground">{s.title}</h3>
+                <h3 className="mt-5 text-lg font-semibold text-foreground">{s.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.body}</p>
               </li>
             ))}
@@ -216,25 +223,25 @@ function HomePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/dashboard"
-                className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                className="btn-lift inline-flex h-11 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
               >
                 Explore the dashboard
               </Link>
               <Link
                 to="/report"
-                className="inline-flex h-10 items-center justify-center rounded-md border border-border bg-background px-4 text-sm font-semibold text-foreground hover:bg-secondary"
+                className="btn-lift inline-flex h-11 items-center justify-center rounded-full border border-border bg-background px-5 text-sm font-semibold text-foreground hover:bg-secondary"
               >
                 Submit a test report
               </Link>
             </div>
           </div>
-          <figure className="rounded-xl border border-border bg-background p-8">
+          <figure className="card-elevated p-8 shadow-[var(--shadow-card-hover)]">
             <blockquote className="text-lg leading-8 text-foreground">
               “Within the first month, our flood response time dropped by 31%. The map gave our
               field teams a single picture of what was happening across the district.”
             </blockquote>
             <figcaption className="mt-6 flex items-center gap-3 text-sm">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary font-semibold text-primary">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
                 AK
               </span>
               <span>
