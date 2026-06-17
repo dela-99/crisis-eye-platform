@@ -94,7 +94,7 @@ function DashboardPage() {
 
         {/* Charts grid */}
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="rounded-xl border border-border bg-background p-5 lg:col-span-2">
+          <div className="card-elevated p-5 lg:col-span-2">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-semibold text-foreground">Reports vs resolved</h2>
@@ -119,7 +119,7 @@ function DashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-border bg-background p-5">
+          <div className="card-elevated p-5">
             <h2 className="text-sm font-semibold text-foreground">Incidents by type</h2>
             <p className="text-xs text-muted-foreground">Current week</p>
             <div className="mt-4 h-48">
@@ -145,7 +145,7 @@ function DashboardPage() {
             </ul>
           </div>
 
-          <div className="rounded-xl border border-border bg-background p-5 lg:col-span-3">
+          <div className="card-elevated p-5 lg:col-span-3">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-semibold text-foreground">Average response time</h2>
@@ -168,7 +168,7 @@ function DashboardPage() {
         </div>
 
         {/* Recent table */}
-        <div className="rounded-xl border border-border bg-background">
+        <div className="card-elevated">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
             <h2 className="text-sm font-semibold">Recent incidents</h2>
             <span className="text-xs text-muted-foreground">5 most recent</span>
@@ -241,7 +241,7 @@ function KpiCard({
 }) {
   const goodUp = tone === "ok" ? trend === "up" : trend === "down";
   return (
-    <div className="rounded-xl border border-border bg-background p-5">
+    <div className="card-elevated p-5">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>

@@ -144,7 +144,7 @@ function MapPage() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-          <div className="overflow-hidden rounded-xl border border-border bg-background">
+          <div className="overflow-hidden card-elevated">
             <div ref={mapEl} className="h-[520px] w-full" />
           </div>
 
