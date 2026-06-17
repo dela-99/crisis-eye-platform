@@ -134,7 +134,7 @@ function MapPage() {
                 {t !== "All" && (
                   <span
                     className="h-2 w-2 rounded-full"
-                    style={{ background: t === "All" ? "transparent" : typeColor[t as IncidentType] }}
+                    style={{ background: typeColor[t] }}
                   />
                 )}
                 {t}
