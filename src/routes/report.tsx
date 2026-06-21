@@ -179,20 +179,47 @@ function ReportPage() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
-              <label htmlFor="location" className="text-sm font-semibold">
-                Location <span className="text-destructive">*</span>
-              </label>
+            <div className="space-y-2 sm:col-span-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label htmlFor="location" className="text-sm font-semibold">
+                  Location <span className="text-destructive">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={detectLocation}
+                  disabled={locating}
+                  className="inline-flex h-8 items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/15 disabled:opacity-60"
+                >
+                  {locating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPin className="h-3.5 w-3.5" />}
+                  {locating ? "Detecting…" : "Use my current location"}
+                </button>
+              </div>
               <input
                 id="location"
                 name="location"
                 required
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 placeholder="Street, neighborhood, or landmark"
                 className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
-              <p className="text-xs text-muted-foreground">We’ll use this to plot the incident on the map.</p>
+              {locStatus.kind === "ok" && (
+                <p className="flex items-start gap-2 text-xs text-emerald-400">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {locStatus.msg}
+                </p>
+              )}
+              {locStatus.kind === "error" && (
+                <p className="flex items-start gap-2 text-xs text-red-400">
+                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {locStatus.msg}
+                </p>
+              )}
+              {locStatus.kind === "idle" && (
+                <p className="text-xs text-muted-foreground">
+                  Enabling location helps responders reach you faster. You can also type a street, neighborhood, or landmark.
+                </p>
+              )}
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 sm:col-span-2">
               <label htmlFor="contact" className="text-sm font-semibold">
                 Contact (optional)
               </label>
@@ -206,6 +233,7 @@ function ReportPage() {
               <p className="text-xs text-muted-foreground">Only used by responders if they need details.</p>
             </div>
           </div>
+
 
           <div className="space-y-2">
             <label htmlFor="description" className="text-sm font-semibold">
