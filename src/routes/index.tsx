@@ -72,6 +72,65 @@ const steps = [
   },
 ];
 
+const ghanaContacts = [
+  {
+    name: "National Emergency (112)",
+    phone: "112",
+    description: "Unified toll-free line for police, ambulance, and fire — works from any phone, even without credit.",
+    icon: Siren,
+    color: "#EF4444",
+  },
+  {
+    name: "Ghana Police Service",
+    phone: "191",
+    description: "Crime in progress, public safety threats, and civil incidents requiring police response.",
+    icon: Shield,
+    color: "#3B82F6",
+  },
+  {
+    name: "National Ambulance Service",
+    phone: "193",
+    description: "Medical emergencies, casualties, and patient transport across all 16 regions.",
+    icon: Ambulance,
+    color: "#10B981",
+  },
+  {
+    name: "Ghana National Fire Service",
+    phone: "192",
+    description: "Structural and vehicle fires, rescues, and hazardous material incidents.",
+    icon: Flame,
+    color: "#F59E0B",
+  },
+  {
+    name: "NADMO",
+    phone: "0299 311 035",
+    description: "National Disaster Management Organisation — floods, storms, and large-scale community emergencies.",
+    icon: ShieldAlert,
+    color: "#8B5CF6",
+  },
+  {
+    name: "Domestic Violence Unit",
+    phone: "0800 111 222",
+    description: "DOVVSU support line for domestic violence and victim assistance, 24 hours.",
+    icon: HeartPulse,
+    color: "#EC4899",
+  },
+  {
+    name: "Electricity Emergencies",
+    phone: "0302 611 611",
+    description: "ECG fault line for downed power lines, exposed cables, and major outages.",
+    icon: Wind,
+    color: "#F97316",
+  },
+  {
+    name: "Motor Traffic & Transport",
+    phone: "0302 684 714",
+    description: "MTTD hotline for road accidents, traffic obstructions, and highway incidents.",
+    icon: Car,
+    color: "#06B6D4",
+  },
+];
+
 function HomePage() {
   return (
     <PageShell>
