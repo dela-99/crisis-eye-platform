@@ -48,7 +48,7 @@ export interface FileRoutesByTo {
   '/report': typeof ReportRoute
 }
 export interface FileRoutesById {
-  '__root__': typeof rootRouteImport
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/map': typeof MapRoute
