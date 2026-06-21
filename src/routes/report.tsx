@@ -43,6 +43,54 @@ function ReportPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [severity, setSeverity] = useState<(typeof severities)[number]["value"]>("moderate");
+  const [location, setLocation] = useState("");
+  const [locating, setLocating] = useState(false);
+  const [locStatus, setLocStatus] = useState<{ kind: "idle" | "ok" | "error"; msg: string }>({
+    kind: "idle",
+    msg: "",
+  });
+
+  const detectLocation = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocStatus({ kind: "error", msg: "Geolocation isn't supported on this device." });
+      return;
+    }
+    setLocating(true);
+    setLocStatus({ kind: "idle", msg: "" });
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const coords = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+        let label = coords;
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=16&addressdetails=0`,
+            { headers: { Accept: "application/json" } },
+          );
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.display_name) label = `${data.display_name} (${coords})`;
+          }
+        } catch {
+          // keep coords-only label
+        }
+        setLocation(label);
+        setLocStatus({ kind: "ok", msg: "Location captured — responders will see your exact position." });
+        setLocating(false);
+      },
+      (err) => {
+        const msg =
+          err.code === err.PERMISSION_DENIED
+            ? "Location permission denied. You can still enter your location manually."
+            : err.code === err.POSITION_UNAVAILABLE
+              ? "We couldn't determine your position. Try again or enter it manually."
+              : "Location request timed out. Try again or enter it manually.";
+        setLocStatus({ kind: "error", msg });
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
+  };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
