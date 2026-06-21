@@ -4,21 +4,6 @@ import { CheckCircle2, Info, Loader2, MapPin, AlertCircle } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 
 export const Route = createFileRoute("/report")({
-  head: () => ({
-    meta: [
-      { title: "Report an Incident — CrisisEye" },
-      {
-        name: "description",
-        content:
-          "Submit an emergency report with type, location, severity, and a short description. Verified reports reach the right responders.",
-      },
-      { property: "og:title", content: "Report an Incident — CrisisEye" },
-      {
-        property: "og:description",
-        content: "File an emergency report in under a minute and help responders act sooner.",
-      },
-    ],
-  }),
   component: ReportPage,
 });
 

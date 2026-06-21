@@ -19,22 +19,6 @@ import heroImage from "@/assets/hero-earth.jpg";
 import { PageShell } from "@/components/PageShell";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "CrisisEye — Emergency Reporting Made Faster and Smarter" },
-      {
-        name: "description",
-        content:
-          "CrisisEye helps communities report, monitor, and track emergencies in real time. Trusted tooling for governments, responders, and NGOs.",
-      },
-      { property: "og:title", content: "CrisisEye — Emergency Reporting Made Faster and Smarter" },
-      {
-        property: "og:description",
-        content:
-          "Report, monitor, and respond to emergencies in real time. Built for governments, responders, and communities.",
-      },
-    ],
-  }),
   component: HomePage,
 });
 

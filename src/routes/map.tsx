@@ -4,21 +4,6 @@ import { PageShell } from "@/components/PageShell";
 import { Flame, Droplets, Car, HeartPulse } from "lucide-react";
 
 export const Route = createFileRoute("/map")({
-  head: () => ({
-    meta: [
-      { title: "Live Incident Map — CrisisEye" },
-      {
-        name: "description",
-        content:
-          "An interactive live map of fires, floods, road accidents, and medical emergencies reported through CrisisEye.",
-      },
-      { property: "og:title", content: "Live Incident Map — CrisisEye" },
-      {
-        property: "og:description",
-        content: "Track verified emergency incidents on a real interactive map in real time.",
-      },
-    ],
-  }),
   component: MapPage,
 });
 

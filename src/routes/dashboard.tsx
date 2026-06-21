@@ -17,21 +17,6 @@ import {
 import { ArrowDownRight, ArrowUpRight, Activity, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({
-    meta: [
-      { title: "Operations Dashboard — CrisisEye" },
-      {
-        name: "description",
-        content:
-          "Track active incidents, resolved cases, response times, and category breakdowns across your region.",
-      },
-      { property: "og:title", content: "Operations Dashboard — CrisisEye" },
-      {
-        property: "og:description",
-        content: "A clean operations dashboard for emergency monitoring and reporting.",
-      },
-    ],
-  }),
   component: DashboardPage,
 });
 
