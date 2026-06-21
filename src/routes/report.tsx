@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { CheckCircle2, Info, Loader2 } from "lucide-react";
+import { CheckCircle2, Info, Loader2, MapPin, AlertCircle } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 
 export const Route = createFileRoute("/report")({
@@ -43,6 +43,54 @@ function ReportPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [severity, setSeverity] = useState<(typeof severities)[number]["value"]>("moderate");
+  const [location, setLocation] = useState("");
+  const [locating, setLocating] = useState(false);
+  const [locStatus, setLocStatus] = useState<{ kind: "idle" | "ok" | "error"; msg: string }>({
+    kind: "idle",
+    msg: "",
+  });
+
+  const detectLocation = () => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocStatus({ kind: "error", msg: "Geolocation isn't supported on this device." });
+      return;
+    }
+    setLocating(true);
+    setLocStatus({ kind: "idle", msg: "" });
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const coords = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+        let label = coords;
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=16&addressdetails=0`,
+            { headers: { Accept: "application/json" } },
+          );
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.display_name) label = `${data.display_name} (${coords})`;
+          }
+        } catch {
+          // keep coords-only label
+        }
+        setLocation(label);
+        setLocStatus({ kind: "ok", msg: "Location captured — responders will see your exact position." });
+        setLocating(false);
+      },
+      (err) => {
+        const msg =
+          err.code === err.PERMISSION_DENIED
+            ? "Location permission denied. You can still enter your location manually."
+            : err.code === err.POSITION_UNAVAILABLE
+              ? "We couldn't determine your position. Try again or enter it manually."
+              : "Location request timed out. Try again or enter it manually.";
+        setLocStatus({ kind: "error", msg });
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
+  };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -131,20 +179,47 @@ function ReportPage() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
-              <label htmlFor="location" className="text-sm font-semibold">
-                Location <span className="text-destructive">*</span>
-              </label>
+            <div className="space-y-2 sm:col-span-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label htmlFor="location" className="text-sm font-semibold">
+                  Location <span className="text-destructive">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={detectLocation}
+                  disabled={locating}
+                  className="inline-flex h-8 items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/15 disabled:opacity-60"
+                >
+                  {locating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPin className="h-3.5 w-3.5" />}
+                  {locating ? "Detecting…" : "Use my current location"}
+                </button>
+              </div>
               <input
                 id="location"
                 name="location"
                 required
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 placeholder="Street, neighborhood, or landmark"
                 className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
-              <p className="text-xs text-muted-foreground">We’ll use this to plot the incident on the map.</p>
+              {locStatus.kind === "ok" && (
+                <p className="flex items-start gap-2 text-xs text-emerald-400">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {locStatus.msg}
+                </p>
+              )}
+              {locStatus.kind === "error" && (
+                <p className="flex items-start gap-2 text-xs text-red-400">
+                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {locStatus.msg}
+                </p>
+              )}
+              {locStatus.kind === "idle" && (
+                <p className="text-xs text-muted-foreground">
+                  Enabling location helps responders reach you faster. You can also type a street, neighborhood, or landmark.
+                </p>
+              )}
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 sm:col-span-2">
               <label htmlFor="contact" className="text-sm font-semibold">
                 Contact (optional)
               </label>
@@ -158,6 +233,7 @@ function ReportPage() {
               <p className="text-xs text-muted-foreground">Only used by responders if they need details.</p>
             </div>
           </div>
+
 
           <div className="space-y-2">
             <label htmlFor="description" className="text-sm font-semibold">

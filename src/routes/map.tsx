@@ -37,12 +37,14 @@ interface Incident {
 }
 
 const sample: Incident[] = [
-  { id: "CE-48211", type: "Fire", severity: "high", title: "Warehouse fire", area: "Industrial District", lat: 40.7411, lng: -74.0048, time: "12 min ago" },
-  { id: "CE-48198", type: "Flood", severity: "moderate", title: "Street flooding", area: "Riverside Ave", lat: 40.7282, lng: -73.9942, time: "34 min ago" },
-  { id: "CE-48184", type: "Road Accident", severity: "moderate", title: "Multi-vehicle collision", area: "Highway 9, exit 14", lat: 40.7549, lng: -73.984, time: "1 hr ago" },
-  { id: "CE-48173", type: "Medical Emergency", severity: "high", title: "Casualties at marathon route", area: "Central Park South", lat: 40.7681, lng: -73.9819, time: "1 hr ago" },
-  { id: "CE-48160", type: "Fire", severity: "low", title: "Vegetation fire (contained)", area: "Northpoint Hills", lat: 40.7831, lng: -73.9712, time: "2 hr ago" },
-  { id: "CE-48152", type: "Flood", severity: "critical", title: "Subway tunnel flooding", area: "Lower East Side", lat: 40.7156, lng: -73.9842, time: "3 hr ago" },
+  { id: "CE-48211", type: "Fire", severity: "high", title: "Warehouse fire", area: "Tema Industrial Area", lat: 5.6698, lng: -0.0166, time: "12 min ago" },
+  { id: "CE-48198", type: "Flood", severity: "moderate", title: "Street flooding", area: "Circle, Accra", lat: 5.5715, lng: -0.2074, time: "34 min ago" },
+  { id: "CE-48184", type: "Road Accident", severity: "moderate", title: "Multi-vehicle collision", area: "N1 Highway, Achimota", lat: 5.6244, lng: -0.2298, time: "1 hr ago" },
+  { id: "CE-48173", type: "Medical Emergency", severity: "high", title: "Casualties at stadium", area: "Baba Yara Stadium, Kumasi", lat: 6.6796, lng: -1.6244, time: "1 hr ago" },
+  { id: "CE-48160", type: "Fire", severity: "low", title: "Bush fire (contained)", area: "Tamale outskirts", lat: 9.4008, lng: -0.8393, time: "2 hr ago" },
+  { id: "CE-48152", type: "Flood", severity: "critical", title: "Coastal flooding", area: "Keta, Volta Region", lat: 5.9173, lng: 0.9885, time: "3 hr ago" },
+  { id: "CE-48140", type: "Road Accident", severity: "high", title: "Tanker overturned", area: "Cape Coast – Takoradi Rd", lat: 5.0855, lng: -1.4499, time: "4 hr ago" },
+  { id: "CE-48131", type: "Medical Emergency", severity: "moderate", title: "Cholera cluster reported", area: "Sekondi-Takoradi", lat: 4.9344, lng: -1.7133, time: "5 hr ago" },
 ];
 
 const typeColor: Record<IncidentType, string> = {
@@ -62,47 +64,69 @@ const typeIcon = {
 function MapPage() {
   const mapEl = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
   const [filter, setFilter] = useState<IncidentType | "All">("All");
   const [selected, setSelected] = useState<Incident | null>(null);
+  const [ready, setReady] = useState(false);
 
+  // Initialize the map once on mount
   useEffect(() => {
     let cancelled = false;
-    let markers: any[] = [];
+    (async () => {
+      const L = (await import("leaflet")).default;
+      if (cancelled || !mapEl.current || mapRef.current) return;
+      const map = L.map(mapEl.current, { zoomControl: true, scrollWheelZoom: true }).setView(
+        [7.9465, -1.0232], // Ghana
+        7,
+      );
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+        subdomains: "abcd",
+        maxZoom: 19,
+      }).addTo(map);
+      mapRef.current = map;
+      // Ensure tiles render once layout settles
+      setTimeout(() => map.invalidateSize(), 50);
+      setReady(true);
+    })();
+    return () => {
+      cancelled = true;
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+  }, []);
 
-    async function init() {
-      // @ts-expect-error - dynamic ESM import of Leaflet from CDN
-      const L = (await import(/* @vite-ignore */ "https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.esm.js")).default;
-      if (cancelled || !mapEl.current) return;
-      if (!mapRef.current) {
-        mapRef.current = L.map(mapEl.current, { zoomControl: true, scrollWheelZoom: true }).setView([40.745, -73.99], 12);
-        L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-          attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
-          subdomains: "abcd",
-          maxZoom: 19,
-        }).addTo(mapRef.current);
-      }
+  // Render / refresh markers when filter changes
+  useEffect(() => {
+    if (!ready || !mapRef.current) return;
+    let cancelled = false;
+    (async () => {
+      const L = (await import("leaflet")).default;
+      if (cancelled) return;
+      markersRef.current.forEach((m) => mapRef.current.removeLayer(m));
+      markersRef.current = [];
       const data = filter === "All" ? sample : sample.filter((i) => i.type === filter);
       data.forEach((i) => {
         const color = typeColor[i.type];
         const icon = L.divIcon({
           className: "",
           html: `<span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;border:3px solid #0B1120;box-shadow:0 0 0 2px ${color}55, 0 2px 6px rgba(0,0,0,.5);font-size:11px;font-weight:700;">${i.type[0]}</span>`,
-          iconSize: [26, 26],
-          iconAnchor: [13, 13],
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
         });
         const m = L.marker([i.lat, i.lng], { icon })
           .addTo(mapRef.current)
+          .bindPopup(
+            `<div style="font-family:Inter,sans-serif;min-width:180px"><div style="font-weight:700;font-size:13px;margin-bottom:2px">${i.title}</div><div style="font-size:12px;color:#475569">${i.type} · ${i.area}</div><div style="font-size:11px;color:#64748b;margin-top:6px">${i.id} · ${i.time}</div></div>`,
+          )
           .on("click", () => setSelected(i));
-        markers.push(m);
+        markersRef.current.push(m);
       });
-    }
-
-    init();
+    })();
     return () => {
       cancelled = true;
-      markers.forEach((m) => mapRef.current?.removeLayer(m));
     };
-  }, [filter]);
+  }, [filter, ready]);
 
   const visible = filter === "All" ? sample : sample.filter((i) => i.type === filter);
 

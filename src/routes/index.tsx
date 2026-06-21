@@ -8,9 +8,12 @@ import {
   ShieldAlert,
   ArrowRight,
   CheckCircle2,
-  Users,
   Clock,
   MapPin,
+  Phone,
+  Shield,
+  Ambulance,
+  Siren,
 } from "lucide-react";
 import heroImage from "@/assets/hero-earth.jpg";
 import { PageShell } from "@/components/PageShell";
@@ -66,6 +69,65 @@ const steps = [
     title: "Respond",
     body: "Verified incidents are routed to the right agency, with a live map and status updates for the public.",
     icon: Clock,
+  },
+];
+
+const ghanaContacts = [
+  {
+    name: "National Emergency (112)",
+    phone: "112",
+    description: "Unified toll-free line for police, ambulance, and fire — works from any phone, even without credit.",
+    icon: Siren,
+    color: "#EF4444",
+  },
+  {
+    name: "Ghana Police Service",
+    phone: "191",
+    description: "Crime in progress, public safety threats, and civil incidents requiring police response.",
+    icon: Shield,
+    color: "#3B82F6",
+  },
+  {
+    name: "National Ambulance Service",
+    phone: "193",
+    description: "Medical emergencies, casualties, and patient transport across all 16 regions.",
+    icon: Ambulance,
+    color: "#10B981",
+  },
+  {
+    name: "Ghana National Fire Service",
+    phone: "192",
+    description: "Structural and vehicle fires, rescues, and hazardous material incidents.",
+    icon: Flame,
+    color: "#F59E0B",
+  },
+  {
+    name: "NADMO",
+    phone: "0299 311 035",
+    description: "National Disaster Management Organisation — floods, storms, and large-scale community emergencies.",
+    icon: ShieldAlert,
+    color: "#8B5CF6",
+  },
+  {
+    name: "Domestic Violence Unit",
+    phone: "0800 111 222",
+    description: "DOVVSU support line for domestic violence and victim assistance, 24 hours.",
+    icon: HeartPulse,
+    color: "#EC4899",
+  },
+  {
+    name: "Electricity Emergencies",
+    phone: "0302 611 611",
+    description: "ECG fault line for downed power lines, exposed cables, and major outages.",
+    icon: Wind,
+    color: "#F97316",
+  },
+  {
+    name: "Motor Traffic & Transport",
+    phone: "0302 684 714",
+    description: "MTTD hotline for road accidents, traffic obstructions, and highway incidents.",
+    icon: Car,
+    color: "#06B6D4",
   },
 ];
 
@@ -202,51 +264,54 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Community impact */}
+      {/* Ghana Emergency Contacts */}
       <section className="border-b border-border bg-secondary">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
-              <Users className="h-3.5 w-3.5" /> Community impact
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-destructive/30 bg-destructive/10 px-3 py-1 text-xs font-medium text-red-300">
+                <Siren className="h-3.5 w-3.5" /> Need immediate help?
+              </div>
+              <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground">
+                Ghana emergency response contacts
+              </h2>
+              <p className="mt-3 text-base text-muted-foreground">
+                Save these numbers. In a life-threatening emergency, call first — then file a CrisisEye report so responders have full situational awareness.
+              </p>
             </div>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground">
-              Built for the people who keep our cities safe.
-            </h2>
-            <p className="mt-4 text-base leading-7 text-muted-foreground">
-              CrisisEye is used by municipal emergency offices, volunteer responder networks, and
-              NGOs to coordinate during floods, fires, and large public events. Information stays
-              accurate because the people closest to the situation can update it directly.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                to="/dashboard"
-                className="btn-lift inline-flex h-11 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
-              >
-                Explore the dashboard
-              </Link>
-              <Link
-                to="/report"
-                className="btn-lift inline-flex h-11 items-center justify-center rounded-full border border-border bg-background px-5 text-sm font-semibold text-foreground hover:bg-secondary"
-              >
-                Submit a test report
-              </Link>
-            </div>
+            <Link
+              to="/report"
+              className="btn-lift inline-flex h-11 items-center justify-center rounded-full bg-destructive px-5 text-sm font-semibold text-destructive-foreground"
+            >
+              File a report
+            </Link>
           </div>
-          <figure className="card-elevated p-8 shadow-[var(--shadow-card-hover)]">
-            <blockquote className="text-lg leading-8 text-foreground">
-              “Within the first month, our flood response time dropped by 31%. The map gave our
-              field teams a single picture of what was happening across the district.”
-            </blockquote>
-            <figcaption className="mt-6 flex items-center gap-3 text-sm">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
-                AK
-              </span>
-              <span>
-                <span className="block font-semibold text-foreground">Aïcha Kemal</span>
-                <span className="block text-muted-foreground">District Emergency Coordinator</span>
-              </span>
-            </figcaption>
-          </figure>
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {ghanaContacts.map((c) => (
+              <li key={c.name} className="card-elevated card-elevated-hover p-5">
+                <div className="flex items-center gap-3">
+                  <span
+                    className="flex h-10 w-10 items-center justify-center rounded-lg"
+                    style={{ background: `${c.color}1f`, color: c.color }}
+                  >
+                    <c.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="text-sm font-semibold text-foreground">{c.name}</h3>
+                </div>
+                <a
+                  href={`tel:${c.phone.replace(/\s/g, "")}`}
+                  className="mt-4 flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground hover:text-primary"
+                >
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  {c.phone}
+                </a>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{c.description}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-6 text-xs text-muted-foreground">
+            112 is Ghana's unified national emergency line and routes to police, ambulance, and fire services.
+          </p>
         </div>
       </section>
     </PageShell>
