@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { CheckCircle2, Info, Loader2 } from "lucide-react";
+import { CheckCircle2, Info, Loader2, MapPin, AlertCircle } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 
 export const Route = createFileRoute("/report")({
