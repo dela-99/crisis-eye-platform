@@ -8,9 +8,12 @@ import {
   ShieldAlert,
   ArrowRight,
   CheckCircle2,
-  Users,
   Clock,
   MapPin,
+  Phone,
+  Shield,
+  Ambulance,
+  Siren,
 } from "lucide-react";
 import heroImage from "@/assets/hero-earth.jpg";
 import { PageShell } from "@/components/PageShell";
