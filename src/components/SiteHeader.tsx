@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
+import eyeLogo from "@/assets/eye-logo.jpeg";
 import { useEffect, useState } from "react";
 
 const nav = [
@@ -32,7 +33,7 @@ export function SiteHeader() {
         <Link to="/" className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-primary/10 ring-1 ring-primary/20">
             <img 
-              src="/logo.jpg" 
+              src={eyeLogo} 
               alt="CrisisEye Icon" 
               className="h-full w-full object-cover object-center scale-[1.35]" 
             />
