@@ -115,21 +115,25 @@ function MapPage() {
       data.forEach((i) => {
         const color = typeColor[i.type];
         
-        // Add danger zone highlight overlay
-        const radiusMap: Record<Severity, number> = {
-          low: 4000,
-          moderate: 8000,
-          high: 16000,
-          critical: 32000,
+        // Add localized incident footprint overlay (small city block area)
+        const offsetMap: Record<Severity, number> = {
+          low: 0.001,       // Very small local footprint
+          moderate: 0.0015,
+          high: 0.0025,
+          critical: 0.004,  // Max ~400m block
         };
-        const zone = L.circle([i.lat, i.lng], {
-          radius: radiusMap[i.severity],
+        const offset = offsetMap[i.severity];
+        const bounds: [[number, number], [number, number]] = [
+          [i.lat - offset, i.lng - offset],
+          [i.lat + offset, i.lng + offset]
+        ];
+        
+        const zone = L.rectangle(bounds, {
           color: color,
           fillColor: color,
-          fillOpacity: 0.15,
-          weight: 1.5,
-          opacity: 0.8,
-          dashArray: "4 5"
+          fillOpacity: 0.2,
+          weight: 2,
+          opacity: 0.9,
         }).addTo(mapRef.current);
         markersRef.current.push(zone);
 
