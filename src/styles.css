@@ -158,6 +158,9 @@
 .leaflet-container {
   background: #0B1120 !important;
 }
+.leaflet-tile-pane {
+  filter: brightness(1.35) contrast(1.15);
+}
 .leaflet-control-attribution {
   background: rgba(17, 24, 39, 0.85) !important;
   color: #94A3B8 !important;
