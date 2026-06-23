@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/PageShell";
-import { Flame, Droplets, Car, HeartPulse } from "lucide-react";
+import { Flame, Droplets, Car, HeartPulse, Maximize, Minimize } from "lucide-react";
 
 export const Route = createFileRoute("/map")({
   component: MapPage,
@@ -48,11 +48,32 @@ const typeIcon = {
 
 function MapPage() {
   const mapEl = useRef<HTMLDivElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const [filter, setFilter] = useState<IncidentType | "All">("All");
   const [selected, setSelected] = useState<Incident | null>(null);
   const [ready, setReady] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      wrapperRef.current?.requestFullscreen().catch(err => {
+        console.error("Error attempting to enable fullscreen:", err.message);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      setTimeout(() => mapRef.current?.invalidateSize(), 100);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   // Initialize the map once on mount
   useEffect(() => {
@@ -64,7 +85,7 @@ function MapPage() {
         [7.9465, -1.0232], // Ghana
         7,
       );
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
         attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
         subdomains: "abcd",
         maxZoom: 19,
@@ -155,7 +176,16 @@ function MapPage() {
 
         <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
           <div className="overflow-hidden card-elevated">
-            <div ref={mapEl} className="h-[520px] w-full" />
+            <div ref={wrapperRef} className={`relative w-full bg-[#0B1120] ${isFullscreen ? "h-screen" : "h-[520px]"}`}>
+              <div ref={mapEl} className="h-full w-full" />
+              <button
+                onClick={toggleFullscreen}
+                className="absolute top-4 right-4 z-[1000] flex h-8 w-8 items-center justify-center rounded bg-background/90 text-foreground shadow-md hover:bg-secondary/90 border border-border/50 transition-colors opacity-80 hover:opacity-100"
+                title="Toggle Fullscreen"
+              >
+                {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
           <aside className="space-y-3">

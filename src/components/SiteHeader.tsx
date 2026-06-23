@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ScanEye, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const nav = [
@@ -30,18 +30,22 @@ export function SiteHeader() {
         }`}
       >
         <Link to="/" className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <ScanEye className="h-4 w-4" />
-          </span>
-          <span className="text-[15px] font-semibold tracking-tight">CrisisEye</span>
+          <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-primary/10 ring-1 ring-primary/20">
+            <img 
+              src="/logo.jpg" 
+              alt="CrisisEye Icon" 
+              className="h-full w-full object-cover object-center scale-[1.35]" 
+            />
+          </div>
+          <span className="text-[17px] font-bold tracking-tight">CrisisEye</span>
         </Link>
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1.5 md:flex">
           {nav.map((n) => (
             <Link
               key={n.to}
               to={n.to}
-              className="rounded-full px-3.5 py-1.5 text-[15px] font-medium text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
-              activeProps={{ className: "rounded-full px-3.5 py-1.5 text-[15px] font-medium bg-secondary text-foreground" }}
+              className="rounded-full px-4 py-2 text-[16px] font-semibold text-muted-foreground transition-colors hover:bg-secondary/80 hover:text-foreground"
+              activeProps={{ className: "rounded-full px-4 py-2 text-[16px] font-semibold bg-secondary text-foreground" }}
             >
               {n.label}
             </Link>
@@ -50,7 +54,7 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 md:flex">
           <Link
             to="/report"
-            className="btn-lift inline-flex h-9 items-center justify-center rounded-full bg-destructive px-4 text-[15px] font-semibold text-destructive-foreground"
+            className="btn-lift inline-flex h-10 items-center justify-center rounded-full bg-destructive px-5 text-[16px] font-semibold text-destructive-foreground"
           >
             Report Emergency
           </Link>
@@ -71,7 +75,7 @@ export function SiteHeader() {
                 key={n.to}
                 to={n.to}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-foreground transition-colors hover:bg-secondary"
+                className="rounded-lg px-4 py-3 text-[17px] font-semibold text-foreground transition-colors hover:bg-secondary"
               >
                 {n.label}
               </Link>
@@ -79,7 +83,7 @@ export function SiteHeader() {
             <Link
               to="/report"
               onClick={() => setOpen(false)}
-              className="btn-lift mt-1 inline-flex h-10 items-center justify-center rounded-lg bg-destructive px-4 text-base font-semibold text-destructive-foreground"
+              className="btn-lift mt-2 inline-flex h-12 items-center justify-center rounded-lg bg-destructive px-4 text-[17px] font-semibold text-destructive-foreground"
             >
               Report Emergency
             </Link>
