@@ -114,6 +114,25 @@ function MapPage() {
       const data = filter === "All" ? sample : sample.filter((i) => i.type === filter);
       data.forEach((i) => {
         const color = typeColor[i.type];
+        
+        // Add danger zone highlight overlay
+        const radiusMap: Record<Severity, number> = {
+          low: 4000,
+          moderate: 8000,
+          high: 16000,
+          critical: 32000,
+        };
+        const zone = L.circle([i.lat, i.lng], {
+          radius: radiusMap[i.severity],
+          color: color,
+          fillColor: color,
+          fillOpacity: 0.15,
+          weight: 1.5,
+          opacity: 0.8,
+          dashArray: "4 5"
+        }).addTo(mapRef.current);
+        markersRef.current.push(zone);
+
         const icon = L.divIcon({
           className: "",
           html: `<span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;border:3px solid #0B1120;box-shadow:0 0 0 2px ${color}55, 0 2px 6px rgba(0,0,0,.5);font-size:11px;font-weight:700;">${i.type[0]}</span>`,
