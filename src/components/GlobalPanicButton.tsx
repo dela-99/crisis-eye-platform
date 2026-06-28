@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { AlertTriangle, MapPin, CheckCircle2, Clock, ShieldAlert, Navigation, X, Siren } from "lucide-react";
+import { MapPin, CheckCircle2, ShieldAlert, Navigation, X, Siren } from "lucide-react";
 
 type PanicState = "idle" | "holding" | "activating" | "active";
 
@@ -26,6 +26,17 @@ export function GlobalPanicButton() {
 
   const HOLD_DURATION = 3000; // 3 seconds
   const PROGRESS_INTERVAL = 50;
+
+  // Handle Esc key to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && panicState === "active") {
+        closeModal();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [panicState]);
 
   const startHold = () => {
     if (panicState === "active") return;
@@ -91,7 +102,7 @@ export function GlobalPanicButton() {
           updateTimelineState(3, "current");
         }, 5000);
       }, 4000);
-    }, 1500);
+    }, 1500); // 1.5s locked transmission
   };
 
   const updateTimelineState = (index: number, status: StatusStep["status"]) => {
@@ -102,16 +113,19 @@ export function GlobalPanicButton() {
     });
   };
 
-  const resetPanic = () => {
-    setPanicState("idle");
-    setHoldProgress(0);
-    setTimeline(timeline.map(t => ({ ...t, status: "pending" })));
+  const closeModal = () => {
+    // Only allow closing if active (not locked in 'activating' state)
+    if (panicState === "active") {
+      setPanicState("idle");
+      setHoldProgress(0);
+      setTimeline(timeline.map(t => ({ ...t, status: "pending" })));
+    }
   };
 
   return (
     <>
       {/* Floating Button */}
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-center gap-2">
+      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-2">
         {panicState === "holding" && (
           <div className="text-xs font-bold text-destructive animate-pulse bg-background/80 px-2 py-1 rounded backdrop-blur border border-destructive/20 shadow-sm">
             HOLD TO ACTIVATE
@@ -123,57 +137,93 @@ export function GlobalPanicButton() {
           onPointerUp={cancelHold}
           onPointerLeave={cancelHold}
           onContextMenu={(e) => e.preventDefault()}
-          className={`relative flex h-16 w-16 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-xl transition-transform ${
-            panicState === "holding" ? "scale-110" : "hover:scale-105"
-          } ${panicState === "active" ? "hidden" : "flex"}`}
+          className={`group relative flex items-center gap-3 rounded-full bg-destructive text-destructive-foreground shadow-xl transition-all ${
+            panicState === "holding" ? "scale-105" : "hover:scale-105"
+          } ${panicState === "active" || panicState === "activating" ? "hidden" : "flex"} p-3 sm:pr-6 sm:pl-3`}
           style={{ touchAction: 'none' }}
           aria-label="Quick Panic"
         >
-          {/* Progress Ring */}
-          {panicState === "holding" && (
-            <svg className="absolute inset-0 h-full w-full -rotate-90">
-              <circle
-                cx="32"
-                cy="32"
-                r="30"
-                fill="none"
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="4"
-              />
-              <circle
-                cx="32"
-                cy="32"
-                r="30"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="4"
-                strokeDasharray="188.5"
-                strokeDashoffset={188.5 - (188.5 * holdProgress) / 100}
-                className="transition-all duration-75"
-              />
-            </svg>
-          )}
-          <AlertTriangle className="h-7 w-7" />
+          {/* Circular SOS Icon */}
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white text-destructive shadow-sm">
+             {/* Progress Ring */}
+             {panicState === "holding" && (
+              <svg className="absolute inset-0 h-full w-full -rotate-90 scale-[1.15]">
+                <circle
+                  cx="24"
+                  cy="24"
+                  r="22"
+                  fill="none"
+                  stroke="rgba(220, 38, 38, 0.2)"
+                  strokeWidth="3"
+                />
+                <circle
+                  cx="24"
+                  cy="24"
+                  r="22"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeDasharray="138"
+                  strokeDashoffset={138 - (138 * holdProgress) / 100}
+                  className="transition-all duration-75 text-white"
+                />
+              </svg>
+            )}
+            <span className="text-xl font-black tracking-tighter">SOS</span>
+          </div>
+
+          {/* Label for Desktop */}
+          <div className="hidden sm:flex flex-col items-start pr-2">
+            <span className="text-sm font-bold uppercase leading-none">🚨 SOS</span>
+            <span className="text-xs font-medium text-destructive-foreground/80">Emergency</span>
+          </div>
         </button>
       </div>
 
-      {/* Active Modal */}
-      {panicState === "active" && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm">
-          <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-destructive/30 bg-card text-card-foreground shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="bg-destructive/10 p-6 text-center border-b border-border/50">
-              <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]">
-                <Siren className="h-8 w-8 animate-pulse" />
-              </span>
-              <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground">Emergency Alert Sent</h2>
-              <p className="mt-2 flex items-center justify-center gap-2 text-sm font-medium text-destructive">
-                <MapPin className="h-4 w-4" /> {location}
-              </p>
+      {/* Activating/Active Modal */}
+      {(panicState === "activating" || panicState === "active") && (
+        <div 
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-background/60 p-4 backdrop-blur-sm transition-opacity"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeModal();
+          }}
+        >
+          <div className="relative w-full max-w-[480px] overflow-hidden rounded-2xl border border-destructive/20 bg-card/95 text-card-foreground shadow-2xl animate-in zoom-in-95 fade-in duration-300 backdrop-blur-xl">
+            
+            {panicState === "active" && (
+              <button 
+                onClick={closeModal}
+                className="absolute right-4 top-4 z-10 rounded-full bg-black/10 p-2 text-foreground/60 transition-colors hover:bg-black/20 hover:text-foreground"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+
+            <div className="bg-destructive/10 p-6 text-center border-b border-border/50 relative overflow-hidden">
+              {panicState === "activating" ? (
+                <>
+                  <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]">
+                    <Siren className="h-8 w-8 animate-pulse" />
+                  </span>
+                  <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground animate-pulse">Transmitting...</h2>
+                </>
+              ) : (
+                <>
+                  <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)] animate-in zoom-in duration-300">
+                    <CheckCircle2 className="h-8 w-8" />
+                  </span>
+                  <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground animate-in slide-in-from-bottom-2 duration-300">Emergency Alert Sent</h2>
+                  <p className="mt-2 flex items-center justify-center gap-2 text-sm font-medium text-destructive animate-in slide-in-from-bottom-2 duration-500">
+                    <MapPin className="h-4 w-4" /> {location}
+                  </p>
+                </>
+              )}
             </div>
 
-            <div className="p-6">
+            <div className="p-6 relative">
               {/* Status Tracker */}
-              <div className="mb-8">
+              <div className={`mb-8 transition-opacity duration-300 ${panicState === "activating" ? "opacity-30 blur-sm pointer-events-none" : "opacity-100"}`}>
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Response Status</h3>
                 <div className="space-y-4">
                   {timeline.map((step, idx) => (
@@ -200,7 +250,7 @@ export function GlobalPanicButton() {
               </div>
 
               {/* Nearest Help */}
-              <div className="rounded-lg border border-border bg-secondary/50 p-4">
+              <div className={`rounded-xl border border-border bg-secondary/50 p-4 transition-opacity duration-500 ${panicState === "activating" ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}>
                 <div className="flex items-center gap-2 mb-3">
                   <ShieldAlert className="h-4 w-4 text-primary" />
                   <h3 className="text-sm font-semibold">Nearest Assistance</h3>
@@ -213,21 +263,23 @@ export function GlobalPanicButton() {
                       Call 191
                     </a>
                   </div>
-                  <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
+                  <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-transform hover:scale-105 shadow-sm">
                     <Navigation className="h-4 w-4" />
                   </button>
                 </div>
               </div>
             </div>
-
-            <div className="border-t border-border bg-muted/30 p-4 text-center">
-              <button
-                onClick={resetPanic}
-                className="text-xs font-semibold text-muted-foreground hover:text-foreground"
-              >
-                Close Status Window
-              </button>
-            </div>
+            
+            {panicState === "active" && (
+              <div className="border-t border-border bg-muted/30 p-4 flex justify-end">
+                <button
+                  onClick={closeModal}
+                  className="rounded-md px-4 py-2 text-sm font-semibold text-foreground hover:bg-secondary transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
