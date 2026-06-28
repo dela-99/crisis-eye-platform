@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { CheckCircle2, Info, Loader2, MapPin, AlertCircle } from "lucide-react";
+import { CheckCircle2, Info, Loader2, MapPin, AlertCircle, Camera } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 
 export const Route = createFileRoute("/report")({
@@ -232,6 +232,24 @@ function ReportPage() {
               placeholder="Describe what you’re seeing — what happened, how many people, any visible hazards."
               className="w-full rounded-md border border-input bg-background p-3 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold">
+              Photo Evidence <span className="text-muted-foreground font-normal">(Optional)</span>
+            </label>
+            <div className="flex justify-center rounded-md border border-dashed border-border bg-background px-6 py-8 text-center transition-colors hover:bg-secondary/50 opacity-80">
+              <div>
+                <Camera className="mx-auto h-8 w-8 text-muted-foreground/50" />
+                <div className="mt-4 flex text-sm leading-6 text-muted-foreground justify-center">
+                  <span className="relative rounded-md font-semibold text-primary">
+                    Upload a photo
+                  </span>
+                  <p className="pl-1">or drag and drop</p>
+                </div>
+                <p className="text-xs leading-5 text-muted-foreground/70">PNG, JPG up to 10MB (coming soon)</p>
+              </div>
+            </div>
           </div>
 
           <fieldset className="space-y-3">

@@ -140,11 +140,10 @@ function HomePage() {
               Live emergency monitoring
             </span>
             <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Emergency reporting<br className="hidden sm:block" /> made faster and smarter.
+              Public Safety & <br className="hidden sm:block" /> Incident Dispatch.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
-              CrisisEye helps communities, governments, and first responders report, monitor, and
-              track emergencies in real time — so the right help arrives sooner.
+              Unified critical event management platform for emergency services. Report, monitor, and coordinate life-saving responses in real time.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Link
@@ -163,6 +162,30 @@ function HomePage() {
             <p className="mt-6 text-xs text-slate-400">
               In a life-threatening emergency, always call your local emergency number first.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Live Status Strip */}
+      <section className="border-b border-border bg-secondary/50">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 divide-x divide-border">
+            <div className="px-4 text-center">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Incidents</p>
+              <p className="mt-2 text-2xl font-bold text-destructive animate-pulse">24</p>
+            </div>
+            <div className="px-4 text-center">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Reports Today</p>
+              <p className="mt-2 text-2xl font-bold text-foreground">142</p>
+            </div>
+            <div className="px-4 text-center">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Avg Response Time</p>
+              <p className="mt-2 text-2xl font-bold text-emerald-500">4.2 min</p>
+            </div>
+            <div className="px-4 text-center">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Agencies Online</p>
+              <p className="mt-2 text-2xl font-bold text-primary">18</p>
+            </div>
           </div>
         </div>
       </section>
@@ -245,6 +268,64 @@ function HomePage() {
               </li>
             ))}
           </ol>
+
+          {/* Responder Workflow Visual */}
+          <div className="mt-16 rounded-xl border border-border bg-secondary/30 p-8">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-8 text-center">Standard Operating Procedure</h3>
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-background border border-border"><MapPin className="h-6 w-6 text-muted-foreground"/></div>
+                <span className="text-xs font-semibold text-foreground">Citizen Report</span>
+              </div>
+              <ArrowRight className="hidden md:block h-5 w-5 text-muted-foreground/50" />
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 border border-primary/30"><ShieldAlert className="h-6 w-6 text-primary"/></div>
+                <span className="text-xs font-semibold text-foreground">CrisisEye Routing</span>
+              </div>
+              <ArrowRight className="hidden md:block h-5 w-5 text-muted-foreground/50" />
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-background border border-border"><Clock className="h-6 w-6 text-muted-foreground"/></div>
+                <span className="text-xs font-semibold text-foreground">Agency Dashboard</span>
+              </div>
+              <ArrowRight className="hidden md:block h-5 w-5 text-muted-foreground/50" />
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 border border-destructive/30"><Siren className="h-6 w-6 text-destructive"/></div>
+                <span className="text-xs font-semibold text-foreground">Dispatch Team</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Public Alerts */}
+      <section className="border-b border-border bg-background">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary">Public Alerts</p>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground">Official emergency information</h2>
+            </div>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              { type: "Weather Warning", title: "Heavy Rainfall Alert", body: "Expect severe thunderstorms and potential flash flooding in coastal areas over the next 48 hours. Avoid low-lying zones.", icon: Wind, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+              { type: "Road Closure", title: "N1 Highway Maintenance", body: "Lane closures on N1 Highway between Achimota and Dzorwulu from 22:00 to 04:00. Use alternative routes.", icon: Car, color: "text-primary", bg: "bg-primary/10", border: "border-primary/20" },
+              { type: "Public Safety", title: "Scheduled Power Outage", body: "ECG load maintenance in Eastern district. Temporary outages expected. Please secure electronic appliances.", icon: ShieldAlert, color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+            ].map((alert) => (
+              <div key={alert.title} className={`rounded-xl border ${alert.border} bg-card p-6 shadow-sm`}>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className={`flex h-10 w-10 items-center justify-center rounded-lg ${alert.bg} ${alert.color}`}>
+                    <alert.icon className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{alert.type}</p>
+                    <h3 className="font-bold text-foreground">{alert.title}</h3>
+                  </div>
+                </div>
+                <p className="text-sm leading-relaxed text-muted-foreground">{alert.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
