@@ -47,7 +47,11 @@ function RegisterPage() {
       // Success, redirect to login
       navigate({ to: "/login" });
     } catch (err: any) {
-      setErrorMsg(err.message);
+      if (err.message === "Failed to fetch" || err.message.includes("NetworkError")) {
+        setErrorMsg("Unable to connect to the backend server. Is it running on port 5000?");
+      } else {
+        setErrorMsg(err.message || "Registration failed due to a database error");
+      }
     } finally {
       setSubmitting(false);
     }

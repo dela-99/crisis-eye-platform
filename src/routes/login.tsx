@@ -46,9 +46,13 @@ function LoginPage() {
         token: data.token,
       });
 
-      navigate({ to: "/dashboard" });
+      navigate({ to: "/" });
     } catch (err: any) {
-      setErrorMsg(err.message);
+      if (err.message === "Failed to fetch" || err.message.includes("NetworkError")) {
+        setErrorMsg("Unable to connect to the backend server. Is it running on port 5000?");
+      } else {
+        setErrorMsg(err.message || "Login failed due to a database error");
+      }
     } finally {
       setSubmitting(false);
     }
