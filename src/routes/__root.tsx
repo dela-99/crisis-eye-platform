@@ -8,6 +8,7 @@ import {
 import { useEffect } from "react";
 
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AuthProvider } from "../lib/AuthContext";
 
 function NotFoundComponent() {
   return (
@@ -80,7 +81,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <AuthProvider>
+        <Outlet />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
