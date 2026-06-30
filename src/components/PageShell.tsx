@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { GlobalPanicButton } from "./GlobalPanicButton";
+import { CRIWidget } from "./CRIWidget";
 
 export function PageShell({ children }: { children: ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export function PageShell({ children }: { children: ReactNode }) {
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter />
+      <CRIWidget />
       <GlobalPanicButton />
     </div>
   );
