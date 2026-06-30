@@ -3,14 +3,15 @@ import {
   ShieldAlert, 
   MapPin, 
   X, 
-  AlertTriangle, 
   CloudRain, 
   Flame, 
   Wind, 
-  Zap, 
-  Info,
-  CheckCircle2,
-  Navigation
+  Navigation,
+  Cloud,
+  Thermometer,
+  Droplets,
+  AlertCircle,
+  CheckCircle
 } from "lucide-react";
 
 type LocationData = {
@@ -19,52 +20,94 @@ type LocationData = {
   community: string;
 };
 
-// --- MOCK DATA ---
+type WeatherData = {
+  temp: number;
+  humidity: number;
+  wind: number;
+  precip: number;
+  condition: string;
+};
+
+// Map WMO codes to human readable strings
+const mapWeatherCode = (code: number) => {
+  if (code === 0) return "Clear sky";
+  if (code <= 3) return "Partly cloudy";
+  if (code <= 49) return "Overcast / Fog";
+  if (code <= 69) return "Rain";
+  if (code <= 79) return "Snow";
+  if (code <= 99) return "Thunderstorm";
+  return "Unknown";
+};
+
+// --- MOCK DATA FOR PRESENTATION ---
 const MOCK_ADVISORIES = [
   {
     id: 1,
-    title: "Heavy Rain Warning",
-    icon: CloudRain,
-    community: "East Legon",
-    riskLevel: "High",
-    color: "bg-orange-500",
-    time: "Next 4 Hours",
-    description: "Intense rainfall expected. Localized flooding possible in low-lying areas.",
-    actions: ["Avoid low-lying areas.", "Move valuables to higher ground.", "Do not drive through flooded roads."]
+    title: "Heavy Rain Expected",
+    status: "Monitor Conditions",
+    color: "bg-yellow-500",
+    recommendations: ["Carry an umbrella.", "Watch weather updates."]
   },
   {
     id: 2,
-    title: "Fire Risk Advisory",
-    icon: Flame,
-    community: "Madina",
-    riskLevel: "Moderate",
-    color: "bg-yellow-500",
-    time: "Today",
-    description: "Dry conditions and high winds increase the risk of rapid fire spread.",
-    actions: ["Avoid open flames.", "Do not burn debris.", "Keep emergency exits clear."]
+    title: "No Active Fire Advisory",
+    status: "Safe",
+    color: "bg-emerald-500",
+    recommendations: []
+  },
+  {
+    id: 3,
+    title: "No Active Flood Advisory",
+    status: "Safe",
+    color: "bg-emerald-500",
+    recommendations: []
   }
 ];
 
 const MOCK_NEARBY = [
-  { community: "Adenta", distance: "3.2 km", severity: "Moderate", risk: "Heavy Rain Expected" },
-  { community: "Airport Residential", distance: "4.5 km", severity: "High", risk: "Flood Watch" },
+  { community: "Polytechnic Area", status: "Safe", color: "text-emerald-500" },
+  { community: "KTU Campus", status: "Safe", color: "text-emerald-500" },
+  { community: "Effiduase", status: "Monitor Conditions", color: "text-yellow-500" },
+  { community: "Low-Lying Streams", status: "Potential Water Accumulation During Heavy Rain", color: "text-orange-500" },
 ];
 
 export function CRIWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [location, setLocation] = useState<LocationData | null>(null);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loadingLoc, setLoadingLoc] = useState(false);
   const [manualEntry, setManualEntry] = useState(false);
 
   // Check local storage for existing permission on mount
   useEffect(() => {
-    const savedLoc = localStorage.getItem("cri_location");
+    const savedLoc = localStorage.getItem("cri_location_koforidua");
     if (savedLoc) {
       setLocation(JSON.parse(savedLoc));
       setHasPermission(true);
     }
   }, []);
+
+  // Fetch Live Weather whenever Location is set
+  useEffect(() => {
+    if (location) {
+      // Coordinates for Koforidua roughly: 6.0945, -0.2609
+      fetch("https://api.open-meteo.com/v1/forecast?latitude=6.0945&longitude=-0.2609&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code")
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.current) {
+            setWeather({
+              temp: data.current.temperature_2m,
+              humidity: data.current.relative_humidity_2m,
+              wind: data.current.wind_speed_10m,
+              precip: data.current.precipitation,
+              condition: mapWeatherCode(data.current.weather_code)
+            });
+          }
+        })
+        .catch(err => console.error("Weather fetch failed:", err));
+    }
+  }, [location]);
 
   // Handle ESC key to close
   useEffect(() => {
@@ -80,15 +123,15 @@ export function CRIWidget() {
   const requestLocation = () => {
     setLoadingLoc(true);
     if (navigator.geolocation) {
-      // Simulate geolocation delay and mock reverse geocoding
+      // Simulate geolocation delay and mock reverse geocoding to Koforidua
       setTimeout(() => {
         const mockLoc = {
-          region: "Greater Accra",
-          district: "Ayawaso West",
-          community: "East Legon"
+          region: "Eastern Region",
+          district: "New Juaben Municipal",
+          community: "Koforidua"
         };
         setLocation(mockLoc);
-        localStorage.setItem("cri_location", JSON.stringify(mockLoc));
+        localStorage.setItem("cri_location_koforidua", JSON.stringify(mockLoc));
         setHasPermission(true);
         setLoadingLoc(false);
       }, 1500);
@@ -107,7 +150,7 @@ export function CRIWidget() {
       community: formData.get("community") as string,
     };
     setLocation(mockLoc);
-    localStorage.setItem("cri_location", JSON.stringify(mockLoc));
+    localStorage.setItem("cri_location_koforidua", JSON.stringify(mockLoc));
     setHasPermission(true);
     setManualEntry(false);
   };
@@ -148,12 +191,12 @@ export function CRIWidget() {
             if (e.target === e.currentTarget) setIsOpen(false);
           }}
         >
-          <div className="relative h-full w-full sm:h-auto sm:max-h-[85vh] sm:w-[480px] overflow-y-auto sm:rounded-2xl border border-border/50 bg-card/95 text-card-foreground shadow-2xl animate-in slide-in-from-right sm:zoom-in-95 duration-300">
+          <div className="relative h-full w-full sm:h-auto sm:max-h-[85vh] sm:w-[500px] overflow-y-auto sm:rounded-2xl border border-border/50 bg-card/95 text-card-foreground shadow-2xl animate-in slide-in-from-right sm:zoom-in-95 duration-300">
             
             {/* Header */}
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border/50 bg-card/80 p-4 backdrop-blur-xl">
               <div className="flex items-center gap-2">
-                <ShieldAlert className="h-5 w-5 text-primary" />
+                <ShieldAlert className="h-5 w-5 text-emerald-500" />
                 <h2 className="text-lg font-bold tracking-tight">Community Risk Intel</h2>
               </div>
               <button 
@@ -168,8 +211,8 @@ export function CRIWidget() {
               {!hasPermission ? (
                 /* Location Permission Flow */
                 <div className="flex flex-col items-center justify-center py-8 text-center animate-in fade-in duration-500">
-                  <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-                    <MapPin className="h-10 w-10 text-primary" />
+                  <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
+                    <MapPin className="h-10 w-10 text-emerald-500" />
                   </div>
                   
                   {!manualEntry ? (
@@ -183,7 +226,7 @@ export function CRIWidget() {
                         <button 
                           onClick={requestLocation}
                           disabled={loadingLoc}
-                          className="btn-lift flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90 disabled:opacity-70"
+                          className="btn-lift flex w-full items-center justify-center rounded-lg bg-emerald-500 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-600 disabled:opacity-70"
                         >
                           {loadingLoc ? "Detecting..." : "Allow Location"}
                         </button>
@@ -207,19 +250,19 @@ export function CRIWidget() {
                       <h3 className="text-lg font-bold mb-4 text-center">Set Your Community</h3>
                       <div className="space-y-1.5">
                         <label className="text-sm font-semibold">Region</label>
-                        <input required name="region" type="text" placeholder="e.g. Greater Accra" className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30" />
+                        <input required name="region" type="text" placeholder="e.g. Eastern Region" className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/30" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-sm font-semibold">District</label>
-                        <input required name="district" type="text" placeholder="e.g. Ayawaso West" className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30" />
+                        <label className="text-sm font-semibold">District/Municipality</label>
+                        <input required name="district" type="text" placeholder="e.g. New Juaben Municipal" className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/30" />
                       </div>
                       <div className="space-y-1.5">
                         <label className="text-sm font-semibold">Community</label>
-                        <input required name="community" type="text" placeholder="e.g. East Legon" className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30" />
+                        <input required name="community" type="text" placeholder="e.g. Koforidua" className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/30" />
                       </div>
                       <div className="pt-2 flex gap-2">
                         <button type="button" onClick={() => setManualEntry(false)} className="flex-1 rounded-md border border-input py-2 text-sm font-semibold hover:bg-secondary">Back</button>
-                        <button type="submit" className="flex-1 rounded-md bg-primary py-2 text-sm font-bold text-primary-foreground hover:bg-primary/90">Save</button>
+                        <button type="submit" className="flex-1 rounded-md bg-emerald-500 py-2 text-sm font-bold text-white hover:bg-emerald-600">Save</button>
                       </div>
                     </form>
                   )}
@@ -228,18 +271,115 @@ export function CRIWidget() {
                 /* CRI Dashboard */
                 <div className="space-y-6 animate-in fade-in duration-500 pb-8 sm:pb-0">
                   
-                  {/* Context & Risk Level */}
-                  <div className="flex items-start justify-between rounded-xl bg-secondary/50 p-4 border border-border/50">
+                  {/* Context */}
+                  <div className="flex items-start justify-between">
                     <div>
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider mb-1">My Community</p>
-                      <h3 className="font-bold text-lg leading-tight">{location?.community}</h3>
+                      <h3 className="font-bold text-xl leading-tight text-foreground">{location?.community}</h3>
                       <p className="text-sm text-muted-foreground">{location?.district}, {location?.region}</p>
                     </div>
-                    <div className="flex flex-col items-end text-right">
-                      <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider mb-1">Today's Risk</p>
-                      <div className="flex items-center gap-1.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full border border-orange-500/20">
-                        <AlertTriangle className="h-4 w-4" />
-                        <span className="text-sm font-bold">High</span>
+                  </div>
+
+                  {/* Live Weather Widget */}
+                  <div className="rounded-xl border border-border bg-secondary/30 p-4 relative overflow-hidden">
+                    <div className="absolute -right-4 -top-4 opacity-5 pointer-events-none">
+                      <Cloud className="h-32 w-32" />
+                    </div>
+                    <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider mb-3">Live Weather</p>
+                    {weather ? (
+                      <div className="grid grid-cols-2 gap-y-4 gap-x-2 relative z-10">
+                        <div className="flex items-center gap-2">
+                          <Thermometer className="h-5 w-5 text-emerald-500" />
+                          <div>
+                            <p className="text-xs text-muted-foreground font-medium">Temperature</p>
+                            <p className="text-sm font-bold">{weather.temp}°C</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Cloud className="h-5 w-5 text-emerald-500" />
+                          <div>
+                            <p className="text-xs text-muted-foreground font-medium">Condition</p>
+                            <p className="text-sm font-bold">{weather.condition}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Droplets className="h-5 w-5 text-emerald-500" />
+                          <div>
+                            <p className="text-xs text-muted-foreground font-medium">Humidity</p>
+                            <p className="text-sm font-bold">{weather.humidity}%</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Wind className="h-5 w-5 text-emerald-500" />
+                          <div>
+                            <p className="text-xs text-muted-foreground font-medium">Wind</p>
+                            <p className="text-sm font-bold">{weather.wind} km/h</p>
+                          </div>
+                        </div>
+                        {weather.precip > 0 && (
+                          <div className="col-span-2 mt-1">
+                            <p className="text-xs font-semibold text-blue-500 bg-blue-500/10 py-1 px-2 rounded inline-block">
+                              Chance of rain: {weather.precip}mm expected
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="h-16 flex items-center justify-center">
+                        <span className="text-sm text-muted-foreground animate-pulse">Fetching live weather...</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Overall Risks Breakdown */}
+                  <div>
+                    <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-emerald-500" /> Risk Breakdown
+                    </h3>
+                    <div className="space-y-2">
+                      {/* Overall */}
+                      <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 rounded-lg">
+                        <span className="text-sm font-bold text-foreground">Today's Overall Risk</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                          <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">LOW</span>
+                        </div>
+                      </div>
+                      
+                      {/* Flood */}
+                      <div className="border border-border rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-sm font-semibold flex items-center gap-1.5"><Droplets className="h-3.5 w-3.5 text-muted-foreground"/> Flood Risk</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">LOW</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground"><span className="font-semibold text-foreground">Reason:</span> Koforidua is generally elevated and currently has no active flood advisory.</p>
+                      </div>
+
+                      {/* Fire */}
+                      <div className="border border-border rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-sm font-semibold flex items-center gap-1.5"><Flame className="h-3.5 w-3.5 text-muted-foreground"/> Fire Risk</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">LOW</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground"><span className="font-semibold text-foreground">Reason:</span> No active fire advisories reported.</p>
+                      </div>
+
+                      {/* Storm */}
+                      <div className="border border-border rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-sm font-semibold flex items-center gap-1.5"><CloudRain className="h-3.5 w-3.5 text-muted-foreground"/> Storm Risk</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="h-2.5 w-2.5 rounded-full bg-yellow-500"></span>
+                            <span className="text-xs font-bold text-yellow-600 dark:text-yellow-400">MODERATE</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground"><span className="font-semibold text-foreground">Reason:</span> Possibility of scattered rainfall later today.</p>
                       </div>
                     </div>
                   </div>
@@ -247,41 +387,29 @@ export function CRIWidget() {
                   {/* Active Advisories */}
                   <div>
                     <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
-                      <Info className="h-4 w-4 text-primary" /> Active Advisories
+                      <AlertCircle className="h-4 w-4 text-emerald-500" /> Active Advisories
                     </h3>
                     <div className="space-y-3">
                       {MOCK_ADVISORIES.map((adv) => (
                         <div key={adv.id} className="rounded-xl border border-border bg-card p-4 shadow-sm">
-                          <div className="flex items-start gap-3 mb-2">
-                            <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${adv.color} text-white`}>
-                              <adv.icon className="h-4 w-4" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-start justify-between gap-2">
-                                <h4 className="font-bold text-foreground leading-tight">{adv.title}</h4>
-                                <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase text-muted-foreground">
-                                  {adv.time}
-                                </span>
-                              </div>
-                              <p className="text-xs font-medium text-destructive mt-0.5">{adv.riskLevel} Risk • {adv.community}</p>
-                            </div>
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h4 className="font-bold text-foreground leading-tight">{adv.title}</h4>
+                            <span className="text-xs font-bold">Status: {adv.status}</span>
                           </div>
                           
-                          <p className="text-sm text-muted-foreground mb-3 pl-11">
-                            {adv.description}
-                          </p>
-
-                          <div className="pl-11 space-y-1.5">
-                            <p className="text-xs font-semibold text-foreground">Recommended Actions:</p>
-                            <ul className="space-y-1">
-                              {adv.actions.map((act, i) => (
-                                <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
-                                  <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                                  <span>{act}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                          {adv.recommendations.length > 0 && (
+                            <div className="space-y-1.5 mt-2 bg-secondary/50 p-2.5 rounded-md border border-border/50">
+                              <p className="text-xs font-semibold text-foreground">Recommendation:</p>
+                              <ul className="space-y-1">
+                                {adv.recommendations.map((act, i) => (
+                                  <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
+                                    <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                                    <span>{act}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -289,20 +417,20 @@ export function CRIWidget() {
 
                   {/* Nearby Risk Zones */}
                   <div>
-                    <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
-                      <Navigation className="h-4 w-4 text-primary" /> Nearby Elevated Risks
-                    </h3>
-                    <div className="rounded-xl border border-border overflow-hidden">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-bold flex items-center gap-2">
+                        <Navigation className="h-4 w-4 text-emerald-500" /> Nearby Community Risk Overview
+                      </h3>
+                    </div>
+                    <p className="text-[11px] font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Demonstration Assessments</p>
+                    <div className="rounded-xl border border-border overflow-hidden bg-card">
                       {MOCK_NEARBY.map((zone, i) => (
-                        <div key={i} className={`flex items-center justify-between p-3 ${i !== MOCK_NEARBY.length - 1 ? 'border-b border-border/50' : ''}`}>
-                          <div>
+                        <div key={i} className={`flex items-start justify-between p-3 gap-2 ${i !== MOCK_NEARBY.length - 1 ? 'border-b border-border/50' : ''}`}>
+                          <div className="flex items-center gap-2">
+                            <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${zone.status === 'Safe' ? 'bg-emerald-500' : zone.status === 'Monitor Conditions' ? 'bg-yellow-500' : 'bg-orange-500'}`}></span>
                             <p className="text-sm font-bold text-foreground">{zone.community}</p>
-                            <p className="text-xs text-muted-foreground">{zone.distance} away</p>
                           </div>
-                          <div className="text-right">
-                            <p className="text-sm font-semibold text-destructive">{zone.severity}</p>
-                            <p className="text-xs text-muted-foreground">{zone.risk}</p>
-                          </div>
+                          <p className={`text-xs font-semibold text-right ${zone.color}`}>{zone.status}</p>
                         </div>
                       ))}
                     </div>
