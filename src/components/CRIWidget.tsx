@@ -128,15 +128,15 @@ export function CRIWidget() {
       <div className="fixed top-20 right-4 sm:top-24 sm:right-6 z-[90]">
         <button
           onClick={() => setIsOpen(true)}
-          className="group flex items-center justify-center gap-2 rounded-full border border-primary/20 bg-background/80 p-2.5 sm:px-4 sm:py-2.5 text-primary shadow-[0_4px_20px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all hover:scale-105 hover:bg-background/95 hover:shadow-[0_4px_25px_rgba(0,0,0,0.15)]"
+          className="group flex items-center justify-center gap-2.5 rounded-full border border-emerald-400/30 bg-emerald-500/95 p-3 sm:px-5 sm:py-3 text-white shadow-[0_4px_20px_rgba(16,185,129,0.3)] backdrop-blur-md transition-all hover:scale-105 hover:bg-emerald-600 hover:shadow-[0_4px_25px_rgba(16,185,129,0.4)]"
           aria-label="Community Risk Intelligence"
         >
           <div className="relative flex items-center justify-center">
             {/* Subtle pulse */}
-            <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-75" style={{ animationDuration: '3s' }} />
-            <ShieldAlert className="relative h-5 w-5 sm:h-5 sm:w-5 text-primary" />
+            <div className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" style={{ animationDuration: '3s' }} />
+            <ShieldAlert className="relative h-6 w-6 sm:h-6 sm:w-6 text-white" />
           </div>
-          <span className="hidden sm:inline-block text-sm font-bold tracking-wide">CRI</span>
+          <span className="hidden sm:inline-block text-base font-bold tracking-wide">CRI</span>
         </button>
       </div>
 
